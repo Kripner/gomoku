@@ -3,8 +3,8 @@ import 'package:gomoku/board/board_content.dart';
 import 'package:gomoku/board/board_painter.dart';
 import 'package:gomoku/utils/pair.dart';
 
-typedef MoveNotificationFunction(GomokuSymbol actor);
-typedef EndNotificationFunction(GomokuSymbol actor);
+typedef MoveNotificationFunction();
+typedef EndNotificationFunction();
 typedef NewGameNotificationFunction();
 
 class Board extends StatefulWidget {
@@ -65,9 +65,9 @@ class BoardState extends State<Board> {
     _boardPainter.contentChanged();
 
     if (widget._boardContent.gameState != GameStatus.IN_PROGRESS) {
-      widget._onGameEnd(actorSymbol);
+      widget._onGameEnd();
     }
-    widget._onMovePlayed(actorSymbol);
+    widget._onMovePlayed();
   }
 
   void _newGameRequest(BuildContext context) {
