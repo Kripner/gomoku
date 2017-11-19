@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "474226071462",
+    "firebase_url": "https://advanced-gomoku-app.firebaseio.com",
+    "project_id": "advanced-gomoku-app",
+    "storage_bucket": "advanced-gomoku-app.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:474226071462:android:e73dd42591412b9d",
+        "android_client_info": {
+          "package_name": "cz.matejkripner.gomoku"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "474226071462-5riat5d7c859ke6nadponbifuc8b9uan.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "cz.matejkripner.gomoku",
+            "certificate_hash": "503ac2b288537417b612eaccc153bc9d20350f6c"
+          }
+        },
+        {
+          "client_id": "474226071462-o9o6qhccunfp48id3oojrh1igflbnf36.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCF3jOlEDwmYunPV0omMi3bDE2wSBqrvWY"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "474226071462-o9o6qhccunfp48id3oojrh1igflbnf36.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

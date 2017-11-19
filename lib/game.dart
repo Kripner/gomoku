@@ -19,10 +19,7 @@ class Player {
 
   @override
   bool operator ==(Object other) =>
-      identical(this, other) ||
-          other is Player &&
-              runtimeType == other.runtimeType &&
-              symbol == other.symbol;
+      identical(this, other) || other is Player && runtimeType == other.runtimeType && symbol == other.symbol;
 
   @override
   int get hashCode => symbol.hashCode;
@@ -59,6 +56,7 @@ abstract class GameState extends State<Game> {
 
   @override
   void dispose() {
+    if (_timeController != null) _timeController.cancel();
     boardContent.gameState = GameStatus.TERMINATED;
     super.dispose();
   }
@@ -81,6 +79,7 @@ abstract class GameState extends State<Game> {
   }
 
   Widget buildTopHeader(BuildContext context);
+
   Widget buildBottomHeader(BuildContext context);
 
   void onMovePlayed() {
@@ -95,7 +94,7 @@ abstract class GameState extends State<Game> {
   }
 
   void onGameEnd() {
-    _timeController.cancel();
+    if (_timeController != null) _timeController.cancel();
     setState(() {
       endActor = playerToMove;
     });
@@ -112,11 +111,9 @@ abstract class GameState extends State<Game> {
   }
 
   void startTimer(Player playingPlayer) {
-    if (_timeController != null) {
-      _timeController.cancel();
-    }
+    if (_timeController != null) _timeController.cancel();
     _timeController =
-    new Timer.periodic(_timeControllerSleep, (Timer _) => decrementTime(playingPlayer, _timeControllerSleep));
+        new Timer.periodic(_timeControllerSleep, (Timer _) => decrementTime(playingPlayer, _timeControllerSleep));
   }
 
   void decrementTime(Player player, Duration time) {
