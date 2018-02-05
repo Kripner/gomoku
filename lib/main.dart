@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:gomoku/game_search_dialog.dart';
 import 'package:gomoku/sign_in.dart';
 import 'package:gomoku/local_game_dialog.dart';
 import 'package:gomoku/menu.dart';
@@ -23,7 +24,8 @@ class MyApp extends StatelessWidget {
       routes: <String, WidgetBuilder>{
         '/': (BuildContext context) => new Menu(),
         '/sign_in': (BuildContext context) => new SignIn(),
-        '/local_game_dialog': (BuildContext context) => new LocalGameDialog()
+        '/local_game_dialog': (BuildContext context) => new LocalGameDialog(),
+        '/game_search': (BuildContext context) => new GameSearchDialog(),
       },
     );
   }

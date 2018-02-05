@@ -26,6 +26,11 @@ class SignIn extends StatelessWidget {
     );
   }
 
+  Future signOut() async {
+    if (await auth.currentUser() != null)
+      await auth.signOut();
+  }
+
   Future proceedAnonymously(BuildContext context) async {
     if (await auth.currentUser() == null) {
       await auth.signInAnonymously();
@@ -37,10 +42,14 @@ class SignIn extends StatelessWidget {
   Future signInWithGoogle(BuildContext context) async {
     GoogleSignInAccount user = googleSignIn.currentUser;
     if (user == null) {
-      await googleSignIn.signIn();
+      user = await googleSignIn.signIn();
     }
+    if (user == null) return;
 
+    await signOut();
     if (await auth.currentUser() == null) {
+      print('current User null');
+
       GoogleSignInAuthentication credentials = await googleSignIn.currentUser.authentication;
       await auth.signInWithGoogle(idToken: credentials.idToken, accessToken: credentials.accessToken);
     }

@@ -16,37 +16,16 @@ class MenuState extends State<Menu> {
 
   @override
   Widget build(BuildContext context) {
-    return new FutureBuilder<Widget>(
-      future: _buildMenuSafe(),
-      builder: (BuildContext context, AsyncSnapshot<Widget> snapshot) {
-        switch (snapshot.connectionState) {
-          case ConnectionState.none:
-          case ConnectionState.waiting:
-            return new Container();
-          default:
-            if (snapshot.hasError) {
-              print(snapshot.error.toString());
-              return new Text(snapshot.error.toString());
-            }
-            return snapshot.data;
-        }
-      },
-    );
+    return _buildMenu();
   }
 
-  Future<Widget> _buildMenuSafe() async {
-    try {
-      return await _buildMenu();
-    } on Exception catch (e) {
-      print('sdofijsdfjodsi');
-      print(e.toString());
-      return null;
-    }
+  Future<FirebaseUser> getUser() async {
+    return auth.currentUser();
   }
 
-  Future<Widget> _buildMenu() async {
+  Widget _buildMenu() {
     return new Scaffold(
-      drawer: await _buildDrawer(),
+      drawer: _buildDrawer(),
       body: new Center(
         child: new Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -54,6 +33,10 @@ class MenuState extends State<Menu> {
             new FlatButton(
               onPressed: () => handleTwoPlayersGame(),
               child: new Text('Two players'),
+            ),
+            new FlatButton(
+              onPressed: () => handleGameSearch(),
+              child: new Text('Play online'),
             ),
           ],
         ),
@@ -65,19 +48,22 @@ class MenuState extends State<Menu> {
     Navigator.pushNamed(context, '/local_game_dialog');
   }
 
-  Future<Drawer> _buildDrawer() async {
+  void handleGameSearch() {
+    Navigator.pushNamed(context, '/game_search');
+  }
+
+  Drawer _buildDrawer() {
     return new Drawer(
       child: new ListView(
         children: <Widget>[
-          await _buildDrawerHeader(),
+          _buildDrawerHeader(),
           new ListTile(),
         ],
       ),
     );
   }
 
-  Future<DrawerHeader> _buildDrawerHeader() async {
-    FirebaseUser currentUser = await auth.currentUser();
+  Widget _buildUserActions(FirebaseUser currentUser) {
     String username;
     FlatButton actionButton;
     if (currentUser == null)
@@ -95,35 +81,50 @@ class MenuState extends State<Menu> {
         child: new Text('Sign out'),
       );
     }
-    return new DrawerHeader(
-      child: new Column(
-        children: <Widget>[
-          new Text(username),
-          actionButton == null ? new Container() : actionButton,
-        ],
-      ),
+    return new Column(
+      children: <Widget>[
+        new Text(username),
+        actionButton == null ? new Container() : actionButton,
+      ],
     );
   }
 
-  Future handleSignIn() async {
-    setState(() {
-      _signingInProgress = true;
-    });
-    await Navigator.of(context).pushNamed('/sign_in');
-    setState(() {
-      _signingInProgress = false;
-    });
+  DrawerHeader _buildDrawerHeader() {
+    Widget actions = new FutureBuilder<FirebaseUser>(
+      future: getUser(),
+      builder: (BuildContext context, AsyncSnapshot<FirebaseUser> snapshot) {
+        if (snapshot.connectionState == ConnectionState.done) return _buildUserActions(snapshot.data);
+        if (snapshot.hasError) {
+          // TODO
+          print('ERROR');
+          print(snapshot.error.toString());
+        }
+        return new Container();
+      },
+    );
+    return new DrawerHeader(child: actions);
   }
 
-  Future handleSignOut() async {
-    setState(() {
-      _signingInProgress = true;
+  void handleSignIn() {
+//    setState(() {
+//      _signingInProgress = true;
+//    });
+    Navigator.of(context).pushNamed('/sign_in');
+//    setState(() {
+//      _signingInProgress = false;
+//    });
+  }
+
+  void handleSignOut() {
+//    setState(() {
+//      _signingInProgress = true;
+//    });
+    Future.wait([auth.signOut(), auth.signInAnonymously()]).then((_) {
+      setState(() {});
     });
-    await auth.signOut();
-    await auth.signInAnonymously();
-    setState(() {
-      _signingInProgress = false;
-    });
+//    setState(() {
+//      _signingInProgress = false;
+//    });
   }
 
   @override
@@ -132,14 +133,20 @@ class MenuState extends State<Menu> {
     auth.currentUser().then((FirebaseUser user) {
       if (user == null) {
         if (shouldOfferLogin()) {
-          Navigator.pushNamed(context, '/sign_in');
-        } else {
-          auth.signInAnonymously().then((FirebaseUser user) {
-            print('Signed in anonymously');
+          Navigator.pushNamed(context, '/sign_in').then((FirebaseUser user) {
+            if (user == null) _signInAnonymously();
           });
+        } else {
+          _signInAnonymously();
         }
       }
       setState(() {});
+    });
+  }
+
+  void _signInAnonymously() {
+    auth.signInAnonymously().then((FirebaseUser user) {
+      print('Signed in anonymously');
     });
   }
 
